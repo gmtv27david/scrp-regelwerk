@@ -124,7 +124,7 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
 .toc a:focus-visible{outline-color:#ffffff}
 /* ===== Version 6: durchgehende Bildbühne, rote Akzente ===== */
 /* Layout: ein fest stehendes Bild hinter der Seite blendet beim Scrollen nahtlos ins nächste, graue Karten gleiten darüber */
-:root{--bg:#3f4146;--tint:#3f4146;--card:rgba(70,73,78,.94);--line:#585b61;--red:#ff3b4e;--redglow:0 0 14px rgba(255,59,78,.75),0 0 28px rgba(255,59,78,.35);--ease:cubic-bezier(.2,.8,.2,1)}
+:root{--bg:#3f4146;--tint:#3f4146;--card:rgba(70,73,78,.94);--line:#585b61;--red:#ff3b4e;--redglow:0 0 14px rgba(255,59,78,.75),0 0 28px rgba(255,59,78,.35);--wglow:0 0 12px rgba(255,255,255,.7),0 0 24px rgba(255,255,255,.25);--ease:cubic-bezier(.2,.8,.2,1)}
 body{background:#2c2e31}
 
 /* ---------- Bildbühne ---------- */
@@ -133,7 +133,7 @@ body{background:#2c2e31}
 .stage .layer:first-child{opacity:1}
 .stage .dim{position:absolute;inset:0;background:#2a2c2f;opacity:var(--dim,0);will-change:opacity}
 .spot{position:fixed;inset:0;z-index:55;pointer-events:none;background:radial-gradient(520px circle at var(--mx,50%) var(--my,30%),rgba(255,255,255,.07),transparent 62%)}
-.k-progress{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);height:3px;z-index:60;background:var(--red);box-shadow:var(--redglow);transform-origin:0 50%;transform:scaleX(0)}
+.k-progress{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);height:3px;z-index:60;background:#fff;box-shadow:var(--wglow);transform-origin:0 50%;transform:scaleX(0)}
 
 /* ---------- Landing: Flugzeugfenster ---------- */
 .k-hero{position:relative;height:300vh}
@@ -178,9 +178,9 @@ body{background:#2c2e31}
 .k6 .intro{margin-top:0}
 .k6 .chap.alt{background:var(--card);box-shadow:0 30px 80px rgba(0,0,0,.4);clip-path:none}
 .k6 .chap{overflow:hidden}
-.k6 .chap::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--red);box-shadow:var(--redglow);z-index:1}
+.k6 .chap::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:#fff;box-shadow:var(--wglow);z-index:1}
 .k6 .chap-head{border-bottom-color:rgba(255,255,255,.1)}
-.k6 .chap-head::after{background:var(--red);box-shadow:var(--redglow);width:80px}
+.k6 .chap-head::after{background:#fff;box-shadow:var(--wglow);width:80px}
 .k6 .chap-head .no{background:linear-gradient(180deg,#fff,#c9ccd2);-webkit-background-clip:text;background-clip:text;color:transparent;filter:none}
 .k6 .chap h3{color:#fff;opacity:.6}
 .k6 .intro .lead{font-size:clamp(24px,3.6vw,38px);font-weight:700;line-height:1.25;letter-spacing:-.02em}
@@ -188,10 +188,10 @@ body{background:#2c2e31}
 .k6 .note::before{background:var(--red);width:3px;box-shadow:var(--redglow)}
 .k6 .note b{color:#fff}
 .k6 .toc a{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);border-radius:14px;transition:transform .4s var(--ease),border-color .3s,box-shadow .3s}
-.k6 .toc a:hover{transform:translateY(-3px);border-color:rgba(255,59,78,.6);box-shadow:0 0 18px rgba(255,59,78,.25)}
+.k6 .toc a:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.5);box-shadow:0 0 18px rgba(255,255,255,.15)}
 .k6 .toc a span{background:#fff;color:#2f3134}
-.k6 .tag{background:var(--red);color:#fff;box-shadow:var(--redglow)}
-.k6 ul.rules ul{border-left-color:rgba(255,59,78,.8)}
+.k6 .tag{background:#fff;color:#2f3134;box-shadow:var(--wglow)}
+.k6 ul.rules ul{border-left-color:rgba(255,255,255,.75)}
 
 /* Galerie: klickbare Kacheln */
 .k6 .photos .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;height:auto}
