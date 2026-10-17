@@ -121,16 +121,127 @@ footer p{margin:0;font-size:11px;letter-spacing:.18em;text-transform:uppercase;c
 .hero::after,footer::before,.chap-head::after,.note::before{box-shadow:0 0 12px rgba(255,255,255,.6)}
 ul.rules ul{border-left-color:rgba(255,255,255,.75)}
 .toc a:hover{border-color:#ffffff;box-shadow:0 0 14px rgba(255,255,255,.18)}
-.toc a:focus-visible{outline-color:#ffffff}</style>
+.toc a:focus-visible{outline-color:#ffffff}
+/* ===== Version 6: durchgehende Bildbühne, rote Akzente ===== */
+/* Layout: ein fest stehendes Bild hinter der Seite blendet beim Scrollen nahtlos ins nächste, graue Karten gleiten darüber */
+:root{--bg:#3f4146;--tint:#3f4146;--card:rgba(70,73,78,.94);--line:#585b61;--red:#ff3b4e;--redglow:0 0 14px rgba(255,59,78,.75),0 0 28px rgba(255,59,78,.35);--wglow:0 0 12px rgba(255,255,255,.7),0 0 24px rgba(255,255,255,.25);--ease:cubic-bezier(.2,.8,.2,1)}
+body{background:#2c2e31}
+
+/* ---------- Bildbühne ---------- */
+.stage{position:fixed;inset:0;z-index:-1;overflow:hidden;background:#2c2e31}
+.stage .layer{position:absolute;inset:0;background:var(--img) center/cover no-repeat;opacity:0;will-change:opacity}
+.stage .layer:first-child{opacity:1}
+.stage .dim{position:absolute;inset:0;background:#2a2c2f;opacity:var(--dim,0);will-change:opacity}
+.spot{position:fixed;inset:0;z-index:55;pointer-events:none;background:radial-gradient(520px circle at var(--mx,50%) var(--my,30%),rgba(255,255,255,.07),transparent 62%)}
+.k-progress{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);height:3px;z-index:60;background:#fff;box-shadow:var(--wglow);transform-origin:0 50%;transform:scaleX(0)}
+
+/* ---------- Landing: Flugzeugfenster ---------- */
+.k-hero{position:relative;height:300vh}
+.k-sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.k-clouds{position:absolute;inset:0;opacity:var(--co,1)}
+.k-clouds i{position:absolute;left:0;width:46vw;height:20vw;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.55),rgba(255,255,255,0));filter:blur(8px);animation:cloud linear infinite}
+.k-clouds i:nth-child(1){top:16%;animation-duration:16s}
+.k-clouds i:nth-child(2){top:44%;animation-duration:22s;animation-delay:-7s;width:60vw}
+.k-clouds i:nth-child(3){top:64%;animation-duration:13s;animation-delay:-3s}
+.k-clouds i:nth-child(4){top:30%;animation-duration:26s;animation-delay:-14s;width:34vw}
+@keyframes cloud{from{transform:translateX(-60vw)}to{transform:translateX(160vw)}}
+.k-window{position:absolute;inset:0;opacity:var(--wo,1);transform:scale(var(--win,1));transform-origin:50% 47%;pointer-events:none;will-change:transform}
+.k-window::before,.k-window::after{content:"";position:absolute;left:50%;top:47%;width:min(52vw,420px);height:min(74vh,640px);transform:translate(-50%,-50%);border-radius:46% / 38%}
+.k-window::before{box-shadow:0 0 0 12px #6a6d73,0 0 0 26px #45474c,0 0 0 30px #5b5e63,0 0 0 200vmax #303236,inset 0 0 60px rgba(0,0,0,.6)}
+.k-window::after{background:linear-gradient(125deg,rgba(255,255,255,.16),rgba(255,255,255,0) 38%,rgba(255,255,255,0) 72%,rgba(255,255,255,.05))}
+.k-title{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;text-align:center;padding-inline:20px;opacity:var(--lo,1);transform:translateY(calc(var(--lo-y,0) * 1px))}
+.k-title .logo{width:150px;height:150px;margin:0 0 20px;filter:drop-shadow(0 10px 26px rgba(0,0,0,.45))}
+.k-title .eyebrow{margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.34em;text-transform:uppercase;color:#fff;opacity:.85}
+.k-title h1{margin:0;font-size:clamp(34px,6vw,64px);font-weight:800;line-height:1.05;color:#fff;letter-spacing:-.02em;text-shadow:0 4px 30px rgba(0,0,0,.4)}
+.k-title .meta{margin-top:18px}
+.k-welcome{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding-inline:20px;opacity:var(--wel,0);transform:translateY(calc((1 - var(--wel,0)) * 24px))}
+.k-welcome h2{margin:0;font-size:clamp(42px,8.5vw,108px);font-weight:800;line-height:1.02;letter-spacing:-.03em;color:#fff;text-shadow:0 6px 40px rgba(0,0,0,.45)}
+.k-hint{position:absolute;left:50%;bottom:calc(5vh + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:grid;justify-items:center;gap:8px;font:600 10px/1 ui-monospace,Consolas,monospace;letter-spacing:.3em;text-transform:uppercase;color:#fff;opacity:var(--hint,1)}
+.k-hint i{display:block;width:18px;height:28px;border:1.5px solid rgba(255,255,255,.85);border-radius:10px;position:relative}
+.k-hint i::after{content:"";position:absolute;left:50%;top:6px;width:2px;height:6px;margin-left:-1px;border-radius:2px;background:#fff;animation:hintDot 1.8s ease-in-out infinite}
+@keyframes hintDot{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(9px)}}
+
+/* ---------- Kapitel-Opener: nur Typo über der Bühne ---------- */
+.op{position:relative;height:200vh;width:100vw;margin-left:calc(50% - 50vw);margin-top:60px}
+.op-sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.op-img{position:absolute;inset:0;display:block;width:100%;height:100%;border:0;padding:0;margin:0;background:transparent;cursor:zoom-in}
+.op-img:focus-visible{outline:3px solid #fff;outline-offset:-6px}
+.op-text{position:absolute;left:0;right:0;bottom:16vh;display:grid;justify-items:center;text-align:center;padding-inline:max(20px,env(safe-area-inset-left,0px));pointer-events:none;opacity:calc(1 - var(--tx,0));transform:translateY(calc(var(--tx,0) * -30px))}
+.op-kick{margin:0 0 14px;font-size:12px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:#fff;opacity:var(--t1,0);transform:translateY(calc((1 - var(--t1,0)) * 14px))}
+.op-text h2{margin:0;font-size:clamp(40px,7.6vw,104px);font-weight:800;line-height:1.02;letter-spacing:-.03em;color:#fff;text-wrap:balance;text-shadow:0 6px 40px rgba(0,0,0,.4);opacity:var(--t2,0);transform:translateY(calc((1 - var(--t2,0)) * 28px))}
+.op-tag{margin:18px 0 0;max-width:30ch;font-size:clamp(17px,2.2vw,24px);font-weight:500;line-height:1.4;color:rgba(255,255,255,.9);text-shadow:0 2px 16px rgba(0,0,0,.4);opacity:var(--t3,0);transform:translateY(calc((1 - var(--t3,0)) * 18px))}
+.op-zoom{position:absolute;right:max(24px,env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));pointer-events:none;padding:8px 14px;border-radius:99px;background:rgba(28,30,33,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.22);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#fff;opacity:calc(var(--t3,0) * (1 - var(--tx,0)))}
+
+/* ---------- Karten gleiten über das Bild ---------- */
+.k6 .op + .chap{margin-top:-55vh}
+.k6 .intro,.k6 .toc,.k6 .chap,.k6 .photos,.k6 .disc{position:relative;z-index:2;background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:44px clamp(20px,4.5vw,52px) 36px;box-shadow:0 30px 80px rgba(0,0,0,.4);margin-top:28px}
+.k6 .intro{margin-top:0}
+.k6 .chap.alt{background:var(--card);box-shadow:0 30px 80px rgba(0,0,0,.4);clip-path:none}
+.k6 .chap{overflow:hidden}
+.k6 .chap::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:#fff;box-shadow:var(--wglow);z-index:1}
+.k6 .chap-head{border-bottom-color:rgba(255,255,255,.1)}
+.k6 .chap-head::after{background:#fff;box-shadow:var(--wglow);width:80px}
+.k6 .chap-head .no{background:linear-gradient(180deg,#fff,#c9ccd2);-webkit-background-clip:text;background-clip:text;color:transparent;filter:none}
+.k6 .chap h3{color:#fff;opacity:.6}
+.k6 .intro .lead{font-size:clamp(24px,3.6vw,38px);font-weight:700;line-height:1.25;letter-spacing:-.02em}
+.k6 .note{background:rgba(255,255,255,.04);border-radius:20px}
+.k6 .note::before{background:var(--red);width:3px;box-shadow:var(--redglow)}
+.k6 .note b{color:#fff}
+.k6 .toc a{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);border-radius:14px;transition:transform .4s var(--ease),border-color .3s,box-shadow .3s}
+.k6 .toc a:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.5);box-shadow:0 0 18px rgba(255,255,255,.15)}
+.k6 .toc a span{background:#fff;color:#2f3134}
+.k6 .tag{background:#fff;color:#2f3134;box-shadow:var(--wglow)}
+.k6 ul.rules ul{border-left-color:rgba(255,255,255,.75)}
+
+/* Galerie: klickbare Kacheln */
+.k6 .photos .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;height:auto}
+.k6 .photos .ph{position:relative;aspect-ratio:4/3;border:0;padding:0;border-radius:18px;cursor:zoom-in;background:#3a3c40 var(--img) center/cover no-repeat;transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+.k6 .photos .ph:first-child{grid-row:auto;aspect-ratio:4/3}
+.k6 .photos .ph:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.k6 .photos .ph:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media (max-width:560px){.k6 .photos .grid{grid-template-columns:1fr 1fr}}
+
+/* Aufdecken: sanftes Anheben */
+.k6 .rv{opacity:0;transform:translateY(22px);transition:opacity 1s var(--ease) var(--d,0ms),transform 1.1s var(--ease) var(--d,0ms)}
+.k6 .rv.in{opacity:1;transform:none}
+
+/* ---------- Lightbox ---------- */
+.lb{position:fixed;inset:0;z-index:100;display:grid;grid-template-rows:1fr auto;background:rgba(18,19,21,.86);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility 0s .4s;padding:calc(64px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lb.open{opacity:1;visibility:visible;transition:opacity .4s var(--ease)}
+.lb-img{width:100%;height:100%;background:var(--img) center/contain no-repeat;transform:scale(.97);transition:transform .5s var(--ease),opacity .3s ease}
+.lb.open .lb-img{transform:none}
+.lb-img.swap{opacity:0}
+.lb-bar{display:flex;align-items:center;justify-content:center;gap:18px;padding-top:16px;color:#fff;font-size:14px;font-weight:500;text-align:center}
+.lb-bar .count{font:600 11px ui-monospace,Consolas,monospace;letter-spacing:.15em;opacity:.6}
+.lb button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;display:grid;place-items:center;transition:background .2s}
+.lb button:hover{background:rgba(255,255,255,.2)}
+.lb button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.lb .close{position:absolute;top:calc(16px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px))}
+
+@media (prefers-reduced-motion:reduce){
+  .k-hero{height:auto}.k-sticky{position:relative}.k-window,.k-clouds,.k-hint,.k-welcome{display:none}.k-title{opacity:1}
+  .op{height:auto}.op-sticky{position:relative;height:60vh}.op-kick,.op-text h2,.op-tag,.op-zoom,.op-text{opacity:1;transform:none}
+  .k6 .op + .chap{margin-top:28px}.k6 .rv{opacity:1;transform:none;transition:none}.spot{display:none}
+}
+</style>
 
 </head>
 <body>
-<header class="hero">
-  <div class="wrap">
-    <div class="logo" role="img" aria-label="Logo Southern California Roleplay"></div>
-    <p class="eyebrow">Southern California Roleplay</p>
-    <h1>Regeln &amp; Bestimmungen</h1>
-    <p class="meta"><span>Version 1.2</span><span>Stand 22.08.2026</span></p>
+<header class="k-hero" id="top">
+  <div class="k-sticky">
+    
+    <div class="k-clouds" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    
+    <div class="k-window" aria-hidden="true"></div>
+    <div class="k-title">
+      <div class="logo" role="img" aria-label="Logo Southern California Roleplay"></div>
+      <p class="eyebrow">Southern California Roleplay</p>
+      <h1>Regeln &amp; Bestimmungen</h1>
+      <p class="meta"><span>Version 1.0</span><span>Stand 17.10.2026</span></p>
+    </div>
+    <div class="k-welcome" aria-hidden="true"><h2>Willkommen in<br>Los Santos.</h2></div>
+    
+    <div class="k-hint" aria-hidden="true"><i></i><span>Scrollen zum Einsteigen</span></div>
   </div>
 </header>
 
@@ -165,7 +276,7 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
   </ol>
 </nav>
 
-<div class="band" style="--img:var(--i17)" role="img" aria-label="Ingame-Szene"><div><strong>Willkommen in Los Santos.</strong><em>Deine Geschichte beginnt hier</em></div></div>
+<section class="op" id="op-k2" data-no="2" data-title="Community- und Staff-Regeln" style="--img:var(--i17)" aria-label="Kapitel 2"><div class="op-sticky"><button class="op-img" data-lb="17" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 02</p><h2>Community &amp;<br>Staff</h2><p class="op-tag">Respekt ist die erste Regel.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
 
 <section class="chap" id="k2">
   <div class="chap-head"><span class="no">02</span><h2>Community- und Staff-Regeln</h2></div>
@@ -192,6 +303,8 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
   </ul>
 </section>
 
+<section class="op" id="op-k3" data-no="3" data-title="Charakter und Roleplay" style="--img:var(--i15)" aria-label="Kapitel 3"><div class="op-sticky"><button class="op-img" data-lb="15" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 03</p><h2>Charakter &amp;<br>Roleplay</h2><p class="op-tag">Jede Figur hat eine Geschichte.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
+
 <section class="chap alt" id="k3">
   <div class="chap-head"><span class="no">03</span><h2>Charakter und Roleplay</h2></div>
   <h3>Charakterentwicklung und Verhalten</h3>
@@ -215,7 +328,7 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
   </ul>
 </section>
 
-<div class="band" style="--img:var(--i16)" role="img" aria-label="Ingame-Szene"><div><strong>Realismus vor Action.</strong><em>Glaubwürdig spielen, respektvoll bleiben</em></div></div>
+<section class="op" id="op-k4" data-no="4" data-title="Leben und Tod" style="--img:var(--i16)" aria-label="Kapitel 4"><div class="op-sticky"><button class="op-img" data-lb="16" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 04</p><h2>Leben und Tod</h2><p class="op-tag">Jedes Leben zählt.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
 
 <section class="chap" id="k4">
   <div class="chap-head"><span class="no">04</span><h2>Leben und Tod</h2></div>
@@ -226,6 +339,8 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
     <li><b>Unrealistisches Fahren</b>Wir sind keine NoPixel-basierte Community, in der Stunt-Sprünge dazugehören. Verboten sind unter anderem unrealistische Sprünge, Fluchten durch Zugtunnel und vergleichbare Manöver ohne Roleplay-Bezug. All das gilt als <strong>Unrealistisches Fahren</strong>.</li>
   </ul>
 </section>
+
+<section class="op" id="op-k5" data-no="5" data-title="Feindseligkeit und Kampf" style="--img:var(--i20)" aria-label="Kapitel 5"><div class="op-sticky"><button class="op-img" data-lb="20" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 05</p><h2>Feindseligkeit<br>und Kampf</h2><p class="op-tag">Realismus vor Action.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
 
 <section class="chap alt" id="k5">
   <div class="chap-head"><span class="no">05</span><h2>Feindseligkeit und Kampf</h2></div>
@@ -249,7 +364,7 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
 
 
 
-<div class="band" style="--img:var(--i12)" role="img" aria-label="Ingame-Szene"><div><strong>Respekt vor jedem Einsatz.</strong><em>Feuerwehr, EMS und Polizei</em></div></div>
+<section class="op" id="op-k6" data-no="6" data-title="Fahrzeuge und Regierungseigentum" style="--img:var(--i12)" aria-label="Kapitel 6"><div class="op-sticky"><button class="op-img" data-lb="12" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 06</p><h2>Fahrzeuge</h2><p class="op-tag">Fahr, als wäre es echt.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
 
 <section class="chap" id="k6">
   <div class="chap-head"><span class="no">06</span><h2>Fahrzeuge und Regierungseigentum</h2></div>
@@ -258,6 +373,8 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
     <li><b>Regierungseigentum</b>Regierungseigentum darf NICHT gestohlen werden. Dazu gehören Fahrzeuge von LEO, Feuerwehr, LAPS (Security) und OPG (Abschleppdienst).</li>
   </ul>
 </section>
+
+<section class="op" id="op-k7" data-no="7" data-title="Medizin und Verletzungen" style="--img:var(--i11)" aria-label="Kapitel 7"><div class="op-sticky"><button class="op-img" data-lb="11" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 07</p><h2>Medizin</h2><p class="op-tag">Jede Verletzung wird ausgespielt.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
 
 <section class="chap alt" id="k7">
   <div class="chap-head"><span class="no">07</span><h2>Medizin und Verletzungen</h2></div>
@@ -268,7 +385,7 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
   </ul>
 </section>
 
-<div class="band" style="--img:var(--i11)" role="img" aria-label="Ingame-Szene"><div><strong>Jede Szene zählt.</strong><em>Gemeinsam die Stadt lebendig halten</em></div></div>
+<section class="op" id="op-k8" data-no="8" data-title="Meta und Kommunikation" style="--img:var(--i18)" aria-label="Kapitel 8"><div class="op-sticky"><button class="op-img" data-lb="18" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 08</p><h2>Meta &amp;<br>Kommunikation</h2><p class="op-tag">Was dein Charakter nicht weiß, weißt du auch nicht.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
 
 <section class="chap" id="k8">
   <div class="chap-head"><span class="no">08</span><h2>Meta und Kommunikation</h2></div>
@@ -285,6 +402,8 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
   </ul>
 </section>
 
+<section class="op" id="op-k9" data-no="9" data-title="Charakterlimits und Alts" style="--img:var(--i14)" aria-label="Kapitel 9"><div class="op-sticky"><button class="op-img" data-lb="14" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 09</p><h2>Ein Leben.<br>Eine Geschichte.</h2><p class="op-tag">Charakterlimits und Alts.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
+
 <section class="chap alt" id="k9">
   <div class="chap-head"><span class="no">09</span><h2>Charakterlimits und Alts</h2></div>
   <ul class="rules">
@@ -293,7 +412,7 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
   </ul>
 </section>
 
-<div class="band" style="--img:var(--i18)" role="img" aria-label="Ingame-Szene"><div><strong>Fair spielen. Immer.</strong><em>Southern California Roleplay</em></div></div>
+<section class="op" id="op-k10" data-no="10" data-title="Beschäftigung und Whitelist-Jobs" style="--img:var(--i19)" aria-label="Kapitel 10"><div class="op-sticky"><button class="op-img" data-lb="19" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 10</p><h2>Jobs</h2><p class="op-tag">Eingestempelt heißt im Einsatz.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
 
 <section class="chap" id="k10">
   <div class="chap-head"><span class="no">10</span><h2>Beschäftigung und Whitelist-Jobs</h2></div>
@@ -303,6 +422,8 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
     <li><b>Löhne festlegen</b>Unternehmensbesitzer dürfen die festgelegten Löhne NICHT selbst im Boss-Menü ändern. Lohnänderungen laufen über das Staff-Team.</li>
   </ul>
 </section>
+
+<section class="op" id="op-k11" data-no="11" data-title="Kriminalregeln" style="--img:var(--i21)" aria-label="Kapitel 11"><div class="op-sticky"><button class="op-img" data-lb="21" aria-label="Bild vergrößern"></button><div class="op-text"><p class="op-kick">Kapitel 11</p><h2>Kriminal&shy;regeln</h2><p class="op-tag">Fair spielen. Immer.</p></div><span class="op-zoom" aria-hidden="true">&#10530; Bild ansehen</span></div></section>
 
 <section class="chap alt" id="k11">
   <div class="chap-head"><span class="no">11</span><h2>Kriminalregeln</h2></div>
@@ -336,7 +457,7 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
   </ul>
 </section>
 
-<section class="photos"><div class="grid"><div class="ph" style="--img:var(--i20)" role="img" aria-label="Officer an seinem Streifenwagen"></div><div class="ph" style="--img:var(--i15)" role="img" aria-label="Streifenwagen auf dem Boulevard"></div><div class="ph" style="--img:var(--i14)" role="img" aria-label="Abzeichen und Einsatzfahrzeug"></div><div class="ph" style="--img:var(--i19)" role="img" aria-label="Sergeant-Abzeichen in der Gasse"></div><div class="ph" style="--img:var(--i21)" role="img" aria-label="Officer vor dem Streifenwagen"></div><div class="ph" style="--img:var(--i22)" role="img" aria-label="Officer am Einsatzfahrzeug"></div></div><p class="cap">Southern California Roleplay · Eindrücke aus der Stadt</p></section>
+<section class="photos"><div class="grid"><button class="ph" style="--img:var(--i20)" data-lb="20" aria-label="Bild vergrößern: Officer an seinem Streifenwagen"></button><button class="ph" style="--img:var(--i15)" data-lb="15" aria-label="Bild vergrößern: Streifenwagen, Heckansicht"></button><button class="ph" style="--img:var(--i14)" data-lb="14" aria-label="Bild vergrößern: Chief-Abzeichen am Streifenwagen"></button><button class="ph" style="--img:var(--i19)" data-lb="19" aria-label="Bild vergrößern: Sergeant-Abzeichen in der Gasse"></button><button class="ph" style="--img:var(--i21)" data-lb="21" aria-label="Bild vergrößern: Sergeant vor dem Streifenwagen"></button><button class="ph" style="--img:var(--i22)" data-lb="22" aria-label="Bild vergrößern: Officer am Einsatzfahrzeug"></button></div><p class="cap">Southern California Roleplay · Eindrücke aus der Stadt · zum Vergrößern antippen</p></section>
 
 <section class="disc" id="k12">
   <h2>Haftungsausschluss</h2>
@@ -347,8 +468,140 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
 
 <footer>
   <div class="logo" role="img" aria-label="Logo Southern California Roleplay" style="margin-inline:auto"></div>
-  <p>Southern California Roleplay · Version 1.2</p>
+  <p>Southern California Roleplay · Version 1.0</p>
 </footer>
 
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('k6');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function smooth(a, b, x) { var t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
+  function prog(el) { var r = el.getBoundingClientRect(); return clamp(-r.top / Math.max(1, r.height - window.innerHeight), 0, 1); }
+  function set(el, k, v) { el.style.setProperty(k, typeof v === 'number' ? v.toFixed(3) : v); }
+
+  // ---------- Bildbühne: ein Bild pro Station, blendet beim Scrollen ins nächste ----------
+  var hero = document.querySelector('.k-hero');
+  var ops = $('.op');
+  var stage = document.createElement('div'); stage.className = 'stage'; stage.setAttribute('aria-hidden', 'true');
+  var imgs = [13].concat(ops.map(function (op) { return +op.querySelector('[data-lb]').getAttribute('data-lb'); }));
+  var layers = imgs.map(function (n) { var l = document.createElement('div'); l.className = 'layer'; l.style.setProperty('--img', 'var(--i' + n + ')'); stage.appendChild(l); return l; });
+  var dim = document.createElement('div'); dim.className = 'dim'; stage.appendChild(dim);
+  document.body.insertBefore(stage, document.body.firstChild);
+
+  var bar = document.createElement('div'); bar.className = 'k-progress'; bar.setAttribute('aria-hidden', 'true'); document.body.appendChild(bar);
+
+  // Licht folgt der Maus
+  if (!reduce && window.matchMedia('(pointer: fine)').matches) {
+    var spot = document.createElement('div'); spot.className = 'spot'; spot.setAttribute('aria-hidden', 'true'); document.body.appendChild(spot);
+    window.addEventListener('pointermove', function (e) { spot.style.setProperty('--mx', e.clientX + 'px'); spot.style.setProperty('--my', e.clientY + 'px'); }, { passive: true });
+  }
+
+  // Inhaltsverzeichnis springt zum Opener
+  $('.toc a').forEach(function (a) {
+    var id = (a.getAttribute('href') || '').slice(1);
+    if (document.getElementById('op-' + id)) a.setAttribute('href', '#op-' + id);
+  });
+
+  // ---------- Aufdecken ----------
+  if (!reduce) {
+    $('.intro > *, .toc .label, .toc li').forEach(function (el, i) { el.classList.add('rv'); el.style.setProperty('--d', ((i % 4) * 60) + 'ms'); });
+    $('.chap-head, .chap h3, ul.rules > li, .photos .ph, .photos .cap, .disc > *').forEach(function (el, i) { el.classList.add('rv'); el.style.setProperty('--d', ((i % 3) * 60) + 'ms'); });
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: .1, rootMargin: '0px 0px -6% 0px' });
+    $('.rv').forEach(function (el) { io.observe(el); });
+  }
+
+  // ---------- Scroll ----------
+  var ticking = false;
+  function frame() {
+    ticking = false;
+    var y = window.scrollY, vh = window.innerHeight, max = root.scrollHeight - vh;
+    bar.style.transform = 'scaleX(' + (max > 0 ? y / max : 0) + ')';
+
+    // Landing: hinein ins Fenster, dann "Willkommen in Los Santos"
+    var hp = hero ? prog(hero) : 1;
+    if (hero && !reduce && hero.getBoundingClientRect().bottom > 0) {
+      var f = clamp(hp / .6, 0, 1);
+      set(hero, '--win', 1 + Math.pow(f, 2.4) * 11);
+      set(hero, '--wo', 1 - smooth(.42, .6, hp));
+      set(hero, '--co', 1 - smooth(.2, .55, hp));
+      set(hero, '--lo', 1 - smooth(0, .22, hp));
+      set(hero, '--lo-y', -smooth(0, .22, hp) * 40);
+      set(hero, '--hint', 1 - smooth(0, .05, hp));
+      set(hero, '--wel', smooth(.6, .72, hp) * (1 - smooth(.84, .95, hp)));
+    }
+
+    // Bilder blenden fließend ineinander, gesteuert vom Scroll
+    var presence = 0;
+    ops.forEach(function (op, i) {
+      var r = op.getBoundingClientRect();
+      set(layers[i + 1], 'opacity', smooth(vh, vh * .1, r.top));
+      if (r.bottom < -50 || r.top > vh + 50) return;
+      var p = prog(op);
+      if (!reduce) {
+        set(op, '--t1', smooth(.02, .14, p));
+        set(op, '--t2', smooth(.06, .2, p));
+        set(op, '--t3', smooth(.14, .26, p));
+        set(op, '--tx', smooth(.38, .5, p));
+      }
+      presence = Math.max(presence, smooth(vh * .6, 0, r.top) * (1 - smooth(.42, .58, p)));
+    });
+    var base = .55 * smooth(.86, 1, hp);
+    set(dim, '--dim', base * (1 - presence * .8));
+  }
+  function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  frame();
+
+  // ---------- Lightbox ----------
+  var shots = [
+    [13, 'Sonnenuntergang am Strand, Feuerwehr im Gegenlicht'], [17, 'Streifenwagen auf dem Boulevard'], [15, 'Streifenwagen, Heckansicht'],
+    [16, 'Blick durch die Windschutzscheibe auf eine Palmenstraße'], [20, 'Officer an seinem Streifenwagen'], [12, 'Löschfahrzeug im Abendlicht'],
+    [11, 'Feuerwehr bei Sonnenuntergang'], [18, 'Streifenwagen an der Kreuzung bei Mosley Auto'], [14, 'Chief-Abzeichen am Streifenwagen'],
+    [19, 'Sergeant-Abzeichen in der Gasse'], [21, 'Sergeant vor dem Streifenwagen'], [22, 'Officer am Einsatzfahrzeug']
+  ];
+  var lb = document.createElement('div'); lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Bildansicht');
+  lb.innerHTML = '<div class="lb-img" role="img"></div><div class="lb-bar"><button class="prev" aria-label="Vorheriges Bild">&#8249;</button><div><div class="cap"></div><div class="count"></div></div><button class="next" aria-label="Nächstes Bild">&#8250;</button></div><button class="close" aria-label="Schließen">&#10005;</button>';
+  document.body.appendChild(lb);
+  var lbImg = lb.querySelector('.lb-img'), lbCap = lb.querySelector('.cap'), lbCount = lb.querySelector('.count'), cur = 0, lastFocus = null;
+  function show(i, instant) {
+    cur = (i + shots.length) % shots.length;
+    var apply = function () {
+      lbImg.style.setProperty('--img', 'var(--i' + shots[cur][0] + ')');
+      lbImg.setAttribute('aria-label', shots[cur][1]);
+      lbCap.textContent = shots[cur][1]; lbCount.textContent = (cur + 1) + ' / ' + shots.length;
+      lbImg.classList.remove('swap');
+    };
+    if (instant) apply(); else { lbImg.classList.add('swap'); setTimeout(apply, 180); }
+  }
+  function open(n) {
+    var i = 0; shots.forEach(function (s, k) { if (s[0] === n) i = k; });
+    lastFocus = document.activeElement; show(i, true); lb.classList.add('open');
+    document.body.style.overflow = 'hidden'; lb.querySelector('.close').focus();
+  }
+  function close() { lb.classList.remove('open'); document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-lb]');
+    if (t) { e.preventDefault(); open(+t.getAttribute('data-lb')); }
+  });
+  lb.querySelector('.close').addEventListener('click', close);
+  lb.querySelector('.prev').addEventListener('click', function () { show(cur - 1); });
+  lb.querySelector('.next').addEventListener('click', function () { show(cur + 1); });
+  lb.addEventListener('click', function (e) { if (e.target === lb) close(); });
+  document.addEventListener('keydown', function (e) {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close(); else if (e.key === 'ArrowLeft') show(cur - 1); else if (e.key === 'ArrowRight') show(cur + 1);
+    else if (e.key === 'Tab') { var f = $('button', lb), i = f.indexOf(document.activeElement); if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); } }
+  });
+  var sx = null;
+  lb.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
+})();
+</script>
 </body>
 </html>
