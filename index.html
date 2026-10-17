@@ -226,6 +226,10 @@ body{background:#2c2e31}
   .op{height:auto}.op-sticky{position:relative;height:60vh}.op-kick,.op-text h2,.op-tag,.op-zoom,.op-text{opacity:1;transform:none}
   .k6 .op + .chap{margin-top:28px}.k6 .rv{opacity:1;transform:none;transition:none}.spot{display:none}
 }
+
+/* Markieren und Kopieren sperren */
+html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+img{-webkit-user-drag:none;user-drag:none}
 </style>
 
 </head>
@@ -632,6 +636,16 @@ body{background:#2c2e31}
   });
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (n) { document.addEventListener(n, function (e) { e.preventDefault(); }); });
   document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+})();
+</script><script>
+// Kopieren, Ausschneiden, Rechtsklick, Ziehen und Strg+A/C/X/S/U/P unterbinden
+(function () {
+  ['copy', 'cut', 'contextmenu', 'selectstart', 'dragstart'].forEach(function (n) {
+    document.addEventListener(n, function (e) { e.preventDefault(); });
+  });
+  document.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'x', 's', 'u', 'p'].indexOf((e.key || '').toLowerCase()) !== -1) e.preventDefault();
+  });
 })();
 </script></body>
 </html>
