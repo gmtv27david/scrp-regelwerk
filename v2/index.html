@@ -454,9 +454,9 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
       parts.forEach(function (p) {
         p.y -= p.v; p.a += .02; if (p.y < -.05) { p.y = 1.05; p.x = Math.random(); }
         var x = (p.x + Math.sin(p.a) * .01) * cv.width, y = p.y * cv.height, al = .25 + Math.sin(p.a * 1.7) * .2;
-        var g = ctx.createRadialGradient(x, y, 0, x, y, p.r * 6 * dpr);
-        g.addColorStop(0, 'rgba(255,255,255,' + (al + .3) + ')'); g.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, p.r * 6 * dpr, 0, Math.PI * 2); ctx.fill();
+        var g = ctx.createRadialGradient(x, y, 0, x, y, p.r * 3.2 * dpr);
+        g.addColorStop(0, 'rgba(255,255,255,' + (al + .25) + ')'); g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, p.r * 3.2 * dpr, 0, Math.PI * 2); ctx.fill();
       });
     }
     requestAnimationFrame(particles);
@@ -511,10 +511,16 @@ ul.rules ul{border-left-color:rgba(255,255,255,.75)}
   });
   mark('.photos .ph', 'rv-tile', 90);
 
+  // Ein komplett weggeschnittenes Element (clip-path) meldet nie eine Überschneidung,
+  // deshalb beobachten wir bei den Kapitelköpfen das Kapitel selbst.
   var io = new IntersectionObserver(function (es) {
-    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
-  $('.rv').forEach(function (el) { io.observe(el); });
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var t = e.target.classList.contains('chap') ? e.target.querySelector('.chap-head') : e.target;
+      t.classList.add('in'); io.unobserve(e.target);
+    });
+  }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
+  $('.rv').forEach(function (el) { io.observe(el.classList.contains('rv-wipe') ? el.parentNode : el); });
 
   // Galerie: 3D-Kippen
   $('.photos .ph').forEach(function (ph) {
