@@ -148,8 +148,9 @@ body{background:#2c2e31}
 .k-clouds i:nth-child(4){top:30%;animation-duration:26s;animation-delay:-14s;width:34vw}
 @keyframes cloud{from{transform:translateX(-60vw)}to{transform:translateX(160vw)}}
 .k-window{position:absolute;inset:0;opacity:var(--wo,1);transform:scale(var(--win,1));transform-origin:50% 47%;pointer-events:none;will-change:transform}
-.k-window::before,.k-window::after{content:"";position:absolute;left:50%;top:47%;width:min(52vw,420px);height:min(74vh,640px);transform:translate(-50%,-50%);border-radius:46% / 38%}
-.k-window::before{box-shadow:0 0 0 12px #6a6d73,0 0 0 26px #45474c,0 0 0 30px #5b5e63,0 0 0 200vmax #303236,inset 0 0 60px rgba(0,0,0,.6)}
+.k-window::before,.k-window::after{content:"";position:absolute;left:50%;top:47%;width:min(52vw,420px);height:min(74vh,640px);transform:translate(-50%,-50%);border-radius:46% / 38%;z-index:1}
+.k-wall{position:absolute;inset:0;background:#303236}
+.k-window::before{box-shadow:0 0 0 12px #6a6d73,0 0 0 26px #45474c,0 0 0 30px #5b5e63,inset 0 0 60px rgba(0,0,0,.6)}
 .k-window::after{background:linear-gradient(125deg,rgba(255,255,255,.16),rgba(255,255,255,0) 38%,rgba(255,255,255,0) 72%,rgba(255,255,255,.05))}
 .k-title{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;text-align:center;padding-inline:20px;opacity:var(--lo,1);transform:translateY(calc(var(--lo-y,0) * 1px))}
 .k-title .logo{width:150px;height:150px;margin:0 0 20px;filter:drop-shadow(0 10px 26px rgba(0,0,0,.45))}
@@ -603,5 +604,24 @@ body{background:#2c2e31}
   lb.addEventListener('touchend', function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
 })();
 </script>
-</body>
+<script>
+// Kabinenwand als ausgeschnittene Fläche: deckt bei jeder Zoomstufe den ganzen Bildschirm ab
+(function () {
+  var win = document.querySelector('.k-window'); if (!win) return;
+  var wall = document.createElement('div'); wall.className = 'k-wall'; win.insertBefore(wall, win.firstChild);
+  function cut() {
+    var w = win.clientWidth, h = win.clientHeight;
+    var hw = Math.min(w * .52, 420), hh = Math.min(window.innerHeight * .74, 640);
+    var cx = w / 2, cy = h * .47, x0 = cx - hw / 2, y0 = cy - hh / 2, x1 = cx + hw / 2, y1 = cy + hh / 2;
+    var rx = hw * .46, ry = hh * .38, f = function (n) { return n.toFixed(1); };
+    var p = 'M0 0H' + f(w) + 'V' + f(h) + 'H0Z' +
+      'M' + f(x0 + rx) + ' ' + f(y0) + 'H' + f(x1 - rx) + 'A' + f(rx) + ' ' + f(ry) + ' 0 0 1 ' + f(x1) + ' ' + f(y0 + ry) +
+      'V' + f(y1 - ry) + 'A' + f(rx) + ' ' + f(ry) + ' 0 0 1 ' + f(x1 - rx) + ' ' + f(y1) +
+      'H' + f(x0 + rx) + 'A' + f(rx) + ' ' + f(ry) + ' 0 0 1 ' + f(x0) + ' ' + f(y1 - ry) +
+      'V' + f(y0 + ry) + 'A' + f(rx) + ' ' + f(ry) + ' 0 0 1 ' + f(x0 + rx) + ' ' + f(y0) + 'Z';
+    wall.style.clipPath = "path(evenodd, '" + p + "')";
+  }
+  cut(); window.addEventListener('resize', cut);
+})();
+</script></body>
 </html>
