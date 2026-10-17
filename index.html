@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>SCRP Regelwerk</title>
 <link rel="preload" as="image" href="img/13.jpg">
 <link rel="preload" as="image" href="img/logo.png">
@@ -622,6 +622,16 @@ body{background:#2c2e31}
     wall.style.clipPath = "path(evenodd, '" + p + "')";
   }
   cut(); window.addEventListener('resize', cut);
+})();
+</script><script>
+// Zoomen per Strg+Mausrad, Strg +/-/0 und Trackpad-Geste unterbinden
+(function () {
+  window.addEventListener('wheel', function (e) { if (e.ctrlKey || e.metaKey) e.preventDefault(); }, { passive: false });
+  window.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '0', 'Add', 'Subtract'].indexOf(e.key) !== -1) e.preventDefault();
+  });
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (n) { document.addEventListener(n, function (e) { e.preventDefault(); }); });
+  document.addEventListener('touchmove', function (e) { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 })();
 </script></body>
 </html>
