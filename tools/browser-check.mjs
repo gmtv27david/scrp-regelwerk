@@ -104,10 +104,27 @@ try {
   const cinematic = await browser.newPage({ width: 1440, height: 900 });
   await cinematic.goto(base, { settleMs: 100 });
   check(await cinematic.eval(() => document.querySelector('main').classList.contains('cinematic-motion')), 'Cinematic animation enhancement is enabled');
+  check(await cinematic.eval(() => getComputedStyle(document.querySelector('.hero-stage')).position === 'sticky'), 'Immersive opening uses a short sticky camera sequence');
+  await cinematic.eval(() => window.scrollTo({ top: 250, behavior: 'instant' }));
+  await cinematic.eval(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done)))));
+  check(await cinematic.eval(() => { const image = document.querySelector('[data-scene-image]'); return image.style.transform.includes('translate3d') && document.querySelector('.hero-stage').style.transform.includes('scale'); }), 'Hero camera and frame respond to native scroll');
   await cinematic.eval(() => { document.querySelector('.community-section').scrollIntoView({ behavior: 'instant' }); });
   await cinematic.eval(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done)))));
   check(await cinematic.eval(() => document.querySelector('.community-photo img').style.transform.includes('scale')), 'Visible gameplay image zoom follows scroll position');
   check(await cinematic.eval(() => document.getAnimations().some(animation => animation.effect.getKeyframes().some(key => key.transform?.includes('translate3d')))), 'Section text and image frames receive directional entrances');
+  await cinematic.eval(() => {
+    const card = document.querySelector('.faction-band figure');
+    const rect = card.getBoundingClientRect();
+    card.dispatchEvent(new PointerEvent('pointermove', { clientX: rect.left + rect.width * .8, clientY: rect.top + rect.height * .3 }));
+  });
+  await cinematic.eval(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
+  check(await cinematic.eval(() => document.querySelector('.faction-band figure').style.rotate.includes('deg')), 'Desktop faction images respond with spatial pointer tilt');
+  await cinematic.eval(() => document.querySelector('.faction-band figure').dispatchEvent(new PointerEvent('pointerleave')));
+  check(await cinematic.eval(() => document.querySelector('.faction-band figure').style.rotate === ''), 'Pointer tilt resets on leaving image');
+  await cinematic.send('Emulation.setPageScaleFactor', { pageScaleFactor: 2 });
+  await cinematic.eval(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
+  check(await cinematic.eval(() => document.querySelector('.hero-stage').style.transform === '' && document.querySelector('.community-photo img').style.transform === ''), 'Pinch zoom suspends camera transforms');
+  await cinematic.send('Emulation.setPageScaleFactor', { pageScaleFactor: 1 });
   await cinematic.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
   await cinematic.eval(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
   check(await cinematic.eval(() => !document.querySelector('main').classList.contains('cinematic-motion') && document.querySelector('.community-photo img').style.transform === ''), 'Changing reduced-motion live removes scroll transforms');

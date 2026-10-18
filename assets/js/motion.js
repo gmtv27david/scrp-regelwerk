@@ -72,6 +72,41 @@
     const media = all('.community-photo img, .faction-band figure img, .connect-images img');
     const heroFrame = main.querySelector('.hero-image');
     const heroImage = main.querySelector('[data-scene-image]');
+    const hero = main.querySelector('.landing-hero');
+    const heroStage = main.querySelector('.hero-stage');
+    const heroCopy = main.querySelector('.hero-copy');
+    const hoverFrames = all('.faction-band > figure');
+    const pointerCleanups = [];
+    hero?.classList.add('scroll-story');
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      hoverFrames.forEach(element => {
+        let pointerFrame = 0;
+        let x = 0;
+        let y = 0;
+        const apply = () => {
+          pointerFrame = 0;
+          const angle = Math.hypot(x, y) * 7;
+          element.style.rotate = `${(-y).toFixed(3)} ${x.toFixed(3)} 0 ${angle.toFixed(2)}deg`;
+          element.style.scale = '1.015';
+        };
+        const move = event => {
+          const rect = element.getBoundingClientRect();
+          x = (event.clientX - rect.left) / rect.width - .5;
+          y = (event.clientY - rect.top) / rect.height - .5;
+          if (!pointerFrame) pointerFrame = requestAnimationFrame(apply);
+        };
+        const reset = () => {
+          cancelAnimationFrame(pointerFrame);
+          pointerFrame = 0;
+          element.style.removeProperty('rotate');
+          element.style.removeProperty('scale');
+          element.style.removeProperty('--pointer-turn');
+        };
+        element.addEventListener('pointermove', move, { passive: true });
+        element.addEventListener('pointerleave', reset);
+        pointerCleanups.push(() => { reset(); element.removeEventListener('pointermove', move); element.removeEventListener('pointerleave', reset); });
+      });
+    }
     const mediaObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) visibleMedia.add(entry.target);
@@ -84,6 +119,15 @@
       frame = 0;
       if (stopped || document.hidden || waiting) return;
       const height = window.innerHeight;
+      if (hero && heroStage && heroImage) {
+        const rect = hero.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < height) {
+          const progress = clamp(-rect.top / Math.max(1, rect.height - height));
+          heroStage.style.transform = `scale(${(1 - progress * .055).toFixed(4)})`;
+          heroImage.style.transform = `scale(${(1.06 + progress * .20).toFixed(4)}) translate3d(0, ${(progress * 3).toFixed(3)}%, 0)`;
+          heroCopy.style.transform = `translate3d(0, ${(-progress * (mobile.matches ? 20 : 48)).toFixed(2)}px, 0)`;
+        }
+      }
       const targets = [...visibleMedia].map(element => {
         const rect = (element === heroFrame ? element : element.parentElement).getBoundingClientRect();
         const progress = clamp((height - rect.top) / (height + rect.height));
@@ -123,6 +167,9 @@
         animations.forEach(animation => animation.finish());
         media.forEach(element => element.style.removeProperty('transform'));
         heroFrame?.style.removeProperty('transform');
+        heroStage?.style.removeProperty('transform');
+        heroCopy?.style.removeProperty('transform');
+        heroImage?.style.removeProperty('transform');
       } else {
         revealItems.forEach((_, element) => { if (!completed.has(element)) revealObserver.observe(element); });
         schedule();
@@ -138,6 +185,11 @@
       mediaObserver.disconnect();
       animations.forEach(animation => animation.cancel());
       main.classList.remove('cinematic-motion');
+      hero?.classList.remove('scroll-story');
+      heroStage?.style.removeProperty('transform');
+      heroCopy?.style.removeProperty('transform');
+      heroImage?.style.removeProperty('transform');
+      pointerCleanups.forEach(cleanup => cleanup());
       media.forEach(element => element.style.removeProperty('transform'));
       heroFrame?.style.removeProperty('transform');
       heroImage?.getAnimations().forEach(animation => animation.cancel());
