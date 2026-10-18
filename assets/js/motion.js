@@ -48,6 +48,11 @@
     collect('.faq-item', 'right', 55);
     collect('.connect-content > h2', 'left');
     collect('.connect-content > div > *', 'right', 65);
+    collect('.community-context > *, .faction-rules > *', 'up', 75);
+    collect('.context-block > *, .support-guide > *', 'up', 60);
+    collect('.entry-copy > *', 'left', 65);
+    collect('.entry-photo', 'right');
+    collect('.faq-intro > p', 'left');
 
     const revealObserver = new IntersectionObserver(entries => {
       if (waiting || stopped) return;

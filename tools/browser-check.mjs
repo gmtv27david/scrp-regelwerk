@@ -57,6 +57,8 @@ try {
   check(await page.eval(() => location.pathname.endsWith('/regelwerk.html') && location.hash === '#k6'), 'Legacy rule hash redirects to the current rulebook');
   await page.goto(base + 'index.html#community', { settleMs: 100 });
   check(await page.eval(() => location.pathname.endsWith('/index.html') && location.hash === '#community'), 'Landing hashes are not redirected');
+  check(await page.eval(() => document.querySelectorAll('.entry-copy .entry-points').length === 3 && document.querySelectorAll('.entry-photo').length === 3), 'Each entry section contains practical guidance and a real image');
+  check(await page.eval(() => document.querySelectorAll('.community-context .context-block, .faction-rules .context-block').length === 4 && Boolean(document.querySelector('.support-guide'))), 'Previously sparse columns contain RP guidance and support information');
   await page.eval(async () => {
     document.querySelector('[data-scene="streets"]').click();
     for (let attempt = 0; attempt < 100; attempt++) {
