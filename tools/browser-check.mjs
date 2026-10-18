@@ -100,6 +100,18 @@ try {
   const reduced = await browser.newPage({ reducedMotion: true });
   await reduced.goto(base, { settleMs: 100 });
   check((await reduced.eval(() => document.getAnimations().length)) === 0, 'Reduced-motion disables movement');
+  check(await reduced.eval(() => !document.querySelector('main').classList.contains('cinematic-motion')), 'Reduced-motion skips cinematic scroll effects');
+  const cinematic = await browser.newPage({ width: 1440, height: 900 });
+  await cinematic.goto(base, { settleMs: 100 });
+  check(await cinematic.eval(() => document.querySelector('main').classList.contains('cinematic-motion')), 'Cinematic animation enhancement is enabled');
+  await cinematic.eval(() => { document.querySelector('.community-section').scrollIntoView({ behavior: 'instant' }); });
+  await cinematic.eval(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done)))));
+  check(await cinematic.eval(() => document.querySelector('.community-photo img').style.transform.includes('scale')), 'Visible gameplay image zoom follows scroll position');
+  check(await cinematic.eval(() => document.getAnimations().some(animation => animation.effect.getKeyframes().some(key => key.transform?.includes('translate3d')))), 'Section text and image frames receive directional entrances');
+  await cinematic.send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+  await cinematic.eval(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
+  check(await cinematic.eval(() => !document.querySelector('main').classList.contains('cinematic-motion') && document.querySelector('.community-photo img').style.transform === ''), 'Changing reduced-motion live removes scroll transforms');
+  check(cinematic.consoleErrors.length === 0, 'Cinematic scrolling has no JavaScript exceptions');
   await reduced.setViewport({ width: 720, height: 450 });
   check(await reduced.eval(() => document.documentElement.scrollWidth <= innerWidth + 1), '200%-equivalent viewport reflows without horizontal overflow');
   await mkdir('.taste-skill/checks', { recursive: true });

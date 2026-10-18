@@ -33,4 +33,15 @@
 @media(hover:hover) and (pointer:fine){.scene-choice:hover,.round-control:not(:disabled):hover{transform:translateY(-2px)}.faq-item summary:hover{text-decoration:underline;text-underline-offset:5px}}
 @media(max-width:1050px){.scene-bar{align-items:flex-start;flex-direction:column;gap:12px}.scene-caption{text-align:left;max-width:65ch}}
 @media(max-width:760px){:root{--radius:22px;--radius-small:14px}.hero-image{height:240px}.hero-copy{padding-top:28px}.scene-options{gap:6px}.scene-choice{padding:10px 12px;font-size:13px}.scene-caption{font-size:13px}.community-mosaic{gap:14px}.community-statement{padding-inline:24px}.faction-band{gap:12px}.faction-type{padding:28px 20px}.connect-images{height:160px;gap:10px}.connect-content{padding:32px 24px}.gallery-toolbar{align-items:flex-end}.gallery-toolbar p{max-width:22ch}.faq-item{padding-inline:20px}.faq-item summary{min-height:64px;font-size:16px}}
+/* Native scrolling stays in charge; moving media remains inside its rounded frame. */
+main:has(.landing-hero){overflow-x:clip}
+.connect-images{overflow:hidden;border-radius:var(--radius)}
+@media(prefers-reduced-motion:no-preference){
+  .cinematic-motion [data-reveal].reveal-in{animation:none}
+  .cinematic-motion .hero-image{transform-origin:50% 100%}
+  .cinematic-motion .community-photo img,.cinematic-motion .faction-band figure img,.cinematic-motion .connect-images img{transform-origin:center}
+  .faq-item[open] p{animation:answer-in 340ms var(--ease) both}
+  .site-header.menu-open .site-nav{animation:answer-in 300ms var(--ease) both}
+  @keyframes answer-in{from{opacity:.25;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+}
 @media print{body{background:white;color:black;font-size:11pt}.site-header,.site-footer,.rules-sidebar,.skip-link,.rule-search{display:none!important}.rules-layout{display:block;padding:0}.rule-chapter[hidden]{display:block!important}.rule-chapter{break-inside:auto;padding-bottom:20px}.rules li{break-inside:avoid}.document-hero{padding:0 0 24px}.note,.draft-notice{background:#eee;color:black}a{color:black}.rule-chapter h2{font-size:22pt}.rule-chapter h3{font-size:14pt}}

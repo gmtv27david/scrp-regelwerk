@@ -11,7 +11,9 @@ Statische, deutschsprachige FiveM-Community-Website. Kein Framework, kein Build-
 - `assets/js/config.js`: Discord-, Server- und Social-Media-Ziele.
 - `assets/js/site.js`: progressive Navigation, Regelsuche, Szenenwechsel, Galerie und Legacy-Anker.
 
-Die Startseite bietet drei manuell wählbare Spieleindrücke, Galerie-Pfeile und native FAQ-Aufklapper. Es gibt keinen automatischen Bildwechsel und keinen Scroll-Zwang. Bilder, Flächen und Bedienelemente sind auf Wunsch abgerundet; reduzierte Bewegung bleibt berücksichtigt.
+Die Startseite bietet drei manuell wählbare Spieleindrücke, Galerie-Pfeile und native FAQ-Aufklapper. Es gibt keinen automatischen Bildwechsel und keinen Scroll-Zwang. Bilder, Flächen und Bedienelemente sind auf Wunsch abgerundet.
+
+`assets/js/motion.js` ergänzt die Startseite um seitliche, gestaffelte Einblendungen und scrollabhängigen Bild-Zoom mit leichter Tiefenbewegung. Die Apple-Inspiration betrifft die ruhige Bewegungsführung, nicht Logos, Produktinhalte oder eine Übernahme der Markenidentität. SCRP-Schrift, Farben und Rundungen bleiben erhalten. Native Scroll-/Wischgesten werden nicht abgefangen; animiert werden nur sichtbare Medien per `requestAnimationFrame`. Bei reduziertem Bewegungsempfinden wird die Erweiterung deaktiviert, auch beim Wechsel der Einstellung während des Besuchs. Während Pinch-Zooms pausieren die Bewegungen. Ohne JavaScript bleiben alle Inhalte sichtbar. Regelwerk und rechtliche Seiten erhalten keine Scroll-Inszenierung.
 
 ## Lokal ansehen
 
