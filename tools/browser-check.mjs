@@ -59,6 +59,13 @@ try {
   check(await page.eval(() => location.pathname.endsWith('/index.html') && location.hash === '#community'), 'Landing hashes are not redirected');
   check(await page.eval(() => document.querySelectorAll('.entry-copy .entry-points').length === 3 && document.querySelectorAll('.entry-photo').length === 3), 'Each entry section contains practical guidance and a real image');
   check(await page.eval(() => document.querySelectorAll('.community-context .context-block, .faction-rules .context-block').length === 4 && Boolean(document.querySelector('.support-guide'))), 'Previously sparse columns contain RP guidance and support information');
+  check(await page.eval(() => document.querySelectorAll('.update-entry').length === 5), 'Changelog contains five documented website/rule updates');
+  await page.eval(() => document.querySelector('[data-update-filter="rules"]').click());
+  check(await page.eval(() => document.querySelectorAll('.update-entry:not([hidden])').length === 1 && document.querySelector('[data-update-filter="rules"]').getAttribute('aria-pressed') === 'true'), 'Changelog filter selects rule changes');
+  await page.eval(() => document.querySelector('[data-update-filter="website"]').click());
+  check(await page.eval(() => document.querySelectorAll('.update-entry:not([hidden])').length === 4), 'Website filter shows four website entries');
+  await page.eval(() => document.querySelector('[data-update-filter="all"]').click());
+  check(await page.eval(() => document.querySelectorAll('.update-entry:not([hidden])').length === 5), 'All-updates filter restores full changelog');
   await page.eval(async () => {
     document.querySelector('[data-scene="streets"]').click();
     for (let attempt = 0; attempt < 100; attempt++) {
@@ -99,13 +106,18 @@ try {
   await nojs.goto(base + 'regelwerk.html', { settleMs: 100 });
   check((await nojs.eval(() => document.querySelectorAll('.rule-chapter:not([hidden])').length)) === 12, 'No-JS: full rules are available');
   check(await nojs.eval(() => getComputedStyle(document.querySelector('.site-nav')).display !== 'none'), 'No-JS: navigation remains usable');
+  await nojs.goto(base, { settleMs: 100 });
+  check(await nojs.eval(() => document.querySelectorAll('.update-entry:not([hidden])').length === 5 && document.querySelector('[data-update-filters]').hidden), 'No-JS: complete changelog remains readable without inactive filters');
   const reduced = await browser.newPage({ reducedMotion: true });
   await reduced.goto(base, { settleMs: 100 });
   check((await reduced.eval(() => document.getAnimations().length)) === 0, 'Reduced-motion disables movement');
   check(await reduced.eval(() => !document.querySelector('main').classList.contains('cinematic-motion')), 'Reduced-motion skips cinematic scroll effects');
+  await reduced.eval(async () => { document.querySelector('[data-scene="patrol"]').click(); for (let i = 0; i < 100 && document.querySelector('[data-scene="patrol"]').getAttribute('aria-pressed') !== 'true'; i++) await new Promise(done => requestAnimationFrame(done)); });
+  check(await reduced.eval(() => document.querySelector('[data-scene="patrol"]').getAttribute('aria-pressed') === 'true' && !document.querySelector('.scene-transition') && document.getAnimations().length === 0), 'Reduced-motion scene selection works without cinematic wipe');
   const cinematic = await browser.newPage({ width: 1440, height: 900 });
   await cinematic.goto(base, { settleMs: 100 });
   check(await cinematic.eval(() => document.querySelector('main').classList.contains('cinematic-motion')), 'Cinematic animation enhancement is enabled');
+  check(await cinematic.eval(() => document.querySelector('.gallery-item').style.transform.includes('rotateY')), 'Gallery receives scroll-driven spatial depth');
   check(await cinematic.eval(() => getComputedStyle(document.querySelector('.hero-stage')).position === 'sticky'), 'Immersive opening uses a short sticky camera sequence');
   await cinematic.eval(() => window.scrollTo({ top: 250, behavior: 'instant' }));
   await cinematic.eval(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done)))));

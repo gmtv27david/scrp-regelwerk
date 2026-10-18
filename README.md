@@ -15,6 +15,12 @@ Die Startseite bietet drei manuell wählbare Spieleindrücke, Galerie-Pfeile und
 
 `assets/js/motion.js` ergänzt die Startseite um eine kurze, bildfüllende Sticky-Kamerafahrt: Das Spielbild zoomt hinein, der gerundete Rahmen zieht sich zurück und die Überschrift bewegt sich räumlich getrennt. Fraktionsbilder stehen versetzt und reagieren auf Desktop-Mausbewegungen mit einer leichten 3D-Neigung. Dazu kommen seitliche, gestaffelte Einblendungen und scrollabhängiger Bild-Zoom mit Tiefenbewegung. Die Eröffnungssequenz dauert weniger als einen zusätzlichen Bildschirm; auf kleinen Höhen entfällt das Pinning. Die Apple-Inspiration betrifft die ruhige Bewegungsführung, nicht Logos, Produktinhalte oder eine Übernahme der Markenidentität. SCRP-Schrift, Farben und Rundungen bleiben erhalten. Native Scroll-/Wischgesten werden nicht abgefangen; animiert werden nur sichtbare Medien per `requestAnimationFrame`. Bei reduziertem Bewegungsempfinden wird die Erweiterung deaktiviert, auch beim Wechsel der Einstellung während des Besuchs. Während Pinch-Zooms pausieren die Bewegungen. Ohne JavaScript bleiben alle Inhalte sichtbar. Regelwerk und rechtliche Seiten erhalten keine Scroll-Inszenierung.
 
+## Changelog und Übergänge
+
+Der Abschnitt `index.html#updates` enthält reale Website-/Regelwerkänderungen, keine erfundenen Spielserver-Patches. Neue Einträge als `.update-entry` mit Datum und `data-update-category="website"` oder `"rules"` ergänzen. Die Filter arbeiten lokal und bleiben ohne JavaScript ausgeblendet; alle Einträge sind dann lesbar. Den anfänglichen Statustext und gegebenenfalls die Tests an die Eintragszahl anpassen.
+
+Szenenwechsel verwenden eine temporäre, für Hilfstechnik unsichtbare Kopie des vorherigen Bildes als seitliche Filmblende. Schnelle Auswahlwechsel entfernen alte Übergangsebenen. Die Galerie erhält beim horizontalen Scrollen eine begrenzte räumliche Neigung; Bilder öffnen sich einmal mit einer Blendenbewegung. Keine Flashes oder Scroll-Blockaden. Reduzierte Bewegung deaktiviert diese Effekte.
+
 ## Lokal ansehen
 
 Node.js 22 oder neuer:

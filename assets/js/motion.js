@@ -20,6 +20,23 @@
     let frame = 0;
     let stopped = false;
     let waiting = false;
+    let galleryFrame = 0;
+    const track = main.querySelector('.gallery-track');
+    const galleryItems = all('.gallery-item');
+    function galleryDepth() {
+      galleryFrame = 0;
+      if (!track || stopped || waiting || document.hidden) return;
+      const viewport = track.getBoundingClientRect();
+      const positions = galleryItems.map(element => ({ element, rect: element.getBoundingClientRect() }));
+      positions.forEach(({ element, rect }) => {
+        const offset = Math.max(-1, Math.min(1, ((rect.left + rect.width / 2) - (viewport.left + viewport.width / 2)) / viewport.width));
+        element.style.transform = `perspective(1400px) rotateY(${(-offset * (mobile.matches ? 3 : 8)).toFixed(2)}deg) translateY(${(Math.abs(offset) * 12).toFixed(2)}px)`;
+      });
+    }
+    function scheduleGallery() { if (!galleryFrame) galleryFrame = requestAnimationFrame(galleryDepth); }
+    track?.addEventListener('scroll', scheduleGallery, { passive: true });
+    window.addEventListener('resize', scheduleGallery, { passive: true });
+    scheduleGallery();
     const horizontal = mobile.matches ? 28 : 76;
     const vertical = mobile.matches ? 22 : 40;
 
@@ -53,6 +70,7 @@
     collect('.entry-copy > *', 'left', 65);
     collect('.entry-photo', 'right');
     collect('.faq-intro > p', 'left');
+    collect('.updates-intro > *, .update-entry', 'up', 65);
 
     const revealObserver = new IntersectionObserver(entries => {
       if (waiting || stopped) return;
@@ -64,10 +82,15 @@
         const { direction, delay } = revealItems.get(element);
         const x = direction === 'left' ? -horizontal : direction === 'right' ? horizontal : 0;
         const y = direction === 'up' ? vertical : 0;
-        const animation = element.animate([
-          { opacity: .18, transform: `translate3d(${x}px, ${y}px, 0) scale(.985)` },
+        const imageFrame = element.matches('.community-photo, .entry-photo, .faction-band > figure');
+        const keyframes = imageFrame ? [
+          { opacity: .45, clipPath: 'inset(0 35% 0 0 round 28px)', transform: `translate3d(${x * .5}px, ${y}px, 0) scale(1.06)` },
+          { opacity: 1, clipPath: 'inset(0 0 0 0 round 28px)', transform: 'translate3d(0, 0, 0) scale(1)' }
+        ] : [
+          { opacity: .18, transform: `translate3d(${x}px, ${y}px, 0) scale(.97)` },
           { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' }
-        ], { duration: mobile.matches ? 750 : 1000, delay, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+        ];
+        const animation = element.animate(keyframes, { duration: mobile.matches ? 750 : 1100, delay, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
         animations.add(animation);
         animation.finished.then(() => animations.delete(animation)).catch(() => {});
       });
@@ -80,7 +103,7 @@
     const hero = main.querySelector('.landing-hero');
     const heroStage = main.querySelector('.hero-stage');
     const heroCopy = main.querySelector('.hero-copy');
-    const hoverFrames = all('.faction-band > figure');
+    const hoverFrames = all('.faction-band > figure, .gallery-item');
     const pointerCleanups = [];
     hero?.classList.add('scroll-story');
     if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -154,7 +177,7 @@
     }
     function visibility() {
       if (document.hidden) animations.forEach(animation => animation.finish());
-      else schedule();
+      else { schedule(); scheduleGallery(); }
     }
 
     main.classList.add('cinematic-motion');
@@ -175,7 +198,9 @@
         heroStage?.style.removeProperty('transform');
         heroCopy?.style.removeProperty('transform');
         heroImage?.style.removeProperty('transform');
+        galleryItems.forEach(element => element.style.removeProperty('transform'));
       } else {
+        scheduleGallery();
         revealItems.forEach((_, element) => { if (!completed.has(element)) revealObserver.observe(element); });
         schedule();
       }
@@ -186,6 +211,10 @@
     dispose = () => {
       stopped = true;
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(galleryFrame);
+      track?.removeEventListener('scroll', scheduleGallery);
+      window.removeEventListener('resize', scheduleGallery);
+      galleryItems.forEach(element => element.style.removeProperty('transform'));
       revealObserver.disconnect();
       mediaObserver.disconnect();
       animations.forEach(animation => animation.cancel());

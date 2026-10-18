@@ -127,16 +127,57 @@
       nextImage.src = scene.src;
       try { await nextImage.decode(); } catch { return; }
       if (selection !== latestSelection) return;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const frame = sceneImage.parentElement;
+      frame.querySelectorAll('.scene-transition').forEach(layer => layer.remove());
+      let previous;
+      if (!reduced) {
+        previous = sceneImage.cloneNode();
+        previous.removeAttribute('data-scene-image');
+        previous.removeAttribute('fetchpriority');
+        previous.alt = '';
+        previous.setAttribute('aria-hidden', 'true');
+        previous.className = 'scene-transition';
+        frame.append(previous);
+      }
+      sceneImage.getAnimations().forEach(animation => animation.cancel());
       sceneImage.src = scene.src;
       sceneImage.alt = scene.alt;
       sceneCaption.textContent = scene.caption;
       buttons.forEach(choice => choice.setAttribute('aria-pressed', String(choice === button)));
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        sceneImage.getAnimations().forEach(animation => animation.cancel());
-        sceneImage.animate([{ opacity: .45, transform: 'scale(1.025)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 550, easing: 'cubic-bezier(.22,1,.36,1)' });
+      if (previous) {
+        const wipe = previous.animate([
+          { clipPath: 'inset(0 0 0 0)', opacity: 1 },
+          { clipPath: 'inset(0 100% 0 0)', opacity: .65 }
+        ], { duration: 850, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
+        wipe.finished.then(() => previous.remove()).catch(() => previous.remove());
+        sceneImage.animate([{ opacity: .5 }, { opacity: 1 }], { duration: 750, easing: 'ease-out' });
       }
     }));
+    const sceneMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    sceneMotion.addEventListener('change', event => {
+      if (!event.matches) return;
+      sceneImage.parentElement.querySelectorAll('.scene-transition').forEach(layer => layer.remove());
+      sceneImage.getAnimations().forEach(animation => animation.cancel());
+    });
     sceneControls.hidden = false;
+  }
+
+  const updateFilters = document.querySelector('[data-update-filters]');
+  if (updateFilters) {
+    const entries = all('[data-update-category]');
+    const status = document.querySelector('[data-update-status]');
+    const filters = all('[data-update-filter]', updateFilters);
+    filters.forEach(button => button.addEventListener('click', () => {
+      let count = 0;
+      entries.forEach(entry => {
+        entry.hidden = button.dataset.updateFilter !== 'all' && entry.dataset.updateCategory !== button.dataset.updateFilter;
+        if (!entry.hidden) count++;
+      });
+      filters.forEach(filter => filter.setAttribute('aria-pressed', String(filter === button)));
+      if (status) status.textContent = `${count} ${count === 1 ? 'Eintrag' : 'Einträge'} angezeigt. Kategorie: ${button.textContent}.`;
+    }));
+    updateFilters.hidden = false;
   }
 
   const track = document.querySelector('.gallery-track');
